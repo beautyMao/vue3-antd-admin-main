@@ -70,10 +70,10 @@
       </a-form-item>
 
       <a-form-item
-        v-for="(s, i) in item.sententce"
+        v-for="(s, i) in item.sentence"
         :key="i"
         :label="'语句' + (i + 1)"
-        :name="['sentenceLibrary', index, 'sententce', i, 'sentenceContent']"
+        :name="['sentenceLibrary', index, 'sentence', i, 'sentenceContent']"
         :rules="{
           required: i == 0 ? true : false,
           message: '请输入语句',
@@ -125,7 +125,7 @@ export default defineComponent({
           sentenceLibraryName: '',
           originalLink: '',
           originalTitle: '',
-          sententce: [{ sentenceContent: '' }, { sentenceContent: '' }]
+          sentence: [{ sentenceContent: '' }, { sentenceContent: '' }]
         }
       ]
     })
@@ -157,18 +157,18 @@ export default defineComponent({
         sentenceLibraryName: '',
         originalLink: '',
         originalTitle: '',
-        sententce: [{ sentenceContent: '' }, { sentenceContent: '' }]
+        sentence: [{ sentenceContent: '' }, { sentenceContent: '' }]
       })
     }
     const resetForm = () => {
       formRef.value.resetFields()
     }
     const addSentenContent = (index, i) => {
-      formState.sentenceLibrary[index].sententce.push({ sentenceContent: '' })
+      formState.sentenceLibrary[index].sentence.push({ sentenceContent: '' })
     }
     const removeSentenceContent = (index, i) => {
       if (i !== 0) {
-        formState.sentenceLibrary[index].sententce.splice(i, 1)
+        formState.sentenceLibrary[index].sentence.splice(i, 1)
       }
     }
 

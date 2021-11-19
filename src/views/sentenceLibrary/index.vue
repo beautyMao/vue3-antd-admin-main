@@ -11,8 +11,10 @@
     "
   >
     <template #action="{ record }">
-      <a-button type="primary" style="margin-right: 8px" @click="editItem(record)">编辑</a-button>
-      <a-button type="primary" @click="deleteItem(record.key)">删除</a-button>
+      <a-button type="primary" style="margin-right: 8px" @click="editItem(record.sentencePublishId)"
+        >编辑</a-button
+      >
+      <a-button type="primary" @click="deleteItem(record.sentencePublishId)">删除</a-button>
     </template>
     <template #expandedRowRender="{ record }">
       <!-- {{ record.keyWord }} -->
@@ -51,11 +53,11 @@ export default defineComponent({
       router.push('/add-sentence')
     }
 
-    const editItem = (item) => {
-      console.log('item===🚀===>', item)
+    const editItem = (sentencePublishId) => {
+      router.push({ path: '/add-sentence', query: { id: sentencePublishId } })
     }
-    const deleteItem = (id) => {
-      console.log(id)
+    const deleteItem = (sentencePublishId) => {
+      console.log(sentencePublishId)
     }
     // const tableData = reactive({
     //   theme: '',
