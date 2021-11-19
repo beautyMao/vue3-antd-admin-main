@@ -4,6 +4,8 @@
   <a-table
     :columns="columns"
     :data-source="tableData"
+    :loading="loading"
+    ref="tableRef"
     :rowKey="
       (record, index) => {
         return index
@@ -27,10 +29,11 @@
 
 <script lang="ts">
 import { useRoute, useRouter } from 'vue-router'
-import { defineComponent, reactive, toRefs, onMounted, ref } from 'vue'
-import { message } from 'ant-design-vue'
+import { defineComponent, createVNode, onMounted, ref } from 'vue'
+import { message, Modal } from 'ant-design-vue'
+import { QuestionCircleOutlined } from '@ant-design/icons-vue'
 
-import { sentencePublishList } from '@/api/system/sentence'
+import { sentencePublishList, delSentencePublish } from '@/api/system/sentence'
 
 import { data } from '@/mock/sentenceL.js'
 
@@ -49,6 +52,9 @@ const columns = [
 export default defineComponent({
   setup() {
     const router = useRouter()
+    const tableRef = ref()
+    const loading = ref(false)
+
     const handleAdd = () => {
       router.push('/add-sentence')
     }
@@ -56,14 +62,21 @@ export default defineComponent({
     const editItem = (sentencePublishId) => {
       router.push({ path: '/add-sentence', query: { id: sentencePublishId } })
     }
+
     const deleteItem = (sentencePublishId) => {
-      console.log(sentencePublishId)
+      Modal.confirm({
+        title: '提示',
+        icon: createVNode(QuestionCircleOutlined),
+        content: '您确定要删除所有选中吗？',
+        onOk: async () => {
+          const { code, msg } = await delSentencePublish(sentencePublishId)
+          if (code != 200) {
+            message.error(msg)
+          }
+          location.reload()
+        }
+      })
     }
-    // const tableData = reactive({
-    //   theme: '',
-    //   keyWord: '',
-    //   category: ''
-    // })
 
     const tableData = ref()
 
@@ -71,7 +84,9 @@ export default defineComponent({
       /**
        * @description 加载表格数据
        */
+      loading.value = true
       const { code, msg, rows, total } = await sentencePublishList()
+      loading.value = false
       if (code == '200') {
         tableData.value = rows
       } else {
@@ -81,9 +96,11 @@ export default defineComponent({
     return {
       columns,
       tableData,
+      loading,
       handleAdd,
       editItem,
-      deleteItem
+      deleteItem,
+      tableRef
     }
   }
 })

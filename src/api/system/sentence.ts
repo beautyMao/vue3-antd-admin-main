@@ -2,15 +2,18 @@ import http from '@/utils/http/axios'
 import { LoginParams, LoginResultModel } from './model/userModel'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { Storage } from '@/utils/Storage'
+import { RequestEnum } from '@/enums/httpEnum'
 const token = Storage.get(ACCESS_TOKEN)
-
+enum Api {
+  sentencePublish = '/sentence/publish'
+}
 /**
  * @description: 信息发布新增
  */
 export function sentencePublish(params) {
   return http.request({
     url: '/sentence/publish',
-    method: 'POST',
+    method: RequestEnum.POST,
     headers: {
       Authorization: token
     },
@@ -19,12 +22,12 @@ export function sentencePublish(params) {
 }
 
 /**
- * @description: 信息发布新增
+ * @description:  信息发布查询 所有
  */
 export function sentencePublishList() {
   return http.request({
-    url: '/sentence/publish/list',
-    method: 'get',
+    url: [Api.sentencePublish, 'list'].join('/'),
+    method: RequestEnum.GET,
     headers: {
       Authorization: token
     }
@@ -36,6 +39,20 @@ export function sentencePublishList() {
 export function getToken() {
   return http.request({
     url: '/token',
-    method: 'get'
+    method: RequestEnum.GET
+  })
+}
+
+/**
+ * -信息发布删除
+ * @param params
+ */
+export function delSentencePublish(id: string) {
+  return http.request({
+    url: [Api.sentencePublish, id].join('/'),
+    method: RequestEnum.DELETE,
+    headers: {
+      Authorization: token
+    }
   })
 }

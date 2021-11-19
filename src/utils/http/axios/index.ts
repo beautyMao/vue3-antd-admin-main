@@ -155,25 +155,25 @@ const transform: AxiosTransform = {
     return config
   },
 
-  /**
-   * @description: 请求拦截器处理
-   */
-  requestInterceptors: (config) => {
-    // 请求之前处理config
-    const token = store.state.user.token
-    if (token) {
-      // jwt token
-      config.headers.token = token
-    }
-    if (config.method?.toLocaleUpperCase() !== RequestEnum.GET) {
-      // 对FORM_URLENCODED类型进行转换
-      if (config.headers?.['Content-Type'] == ContentTypeEnum.FORM_URLENCODED) {
-        // config.params = qs.stringify(config.params, { arrayFormat: 'brackets' })
-        config.data = qs.stringify(config.data, { arrayFormat: 'brackets' })
-      }
-    }
-    return config
-  },
+  // /**
+  //  * @description: 请求拦截器处理
+  //  */
+  // requestInterceptors: (config) => {
+  //   // 请求之前处理config
+  //   const token = store.state.user.token
+  //   if (token) {
+  //     // jwt token
+  //     config.headers.token = token
+  //   }
+  //   if (config.method?.toLocaleUpperCase() !== RequestEnum.GET) {
+  //     // 对FORM_URLENCODED类型进行转换
+  //     if (config.headers?.['Content-Type'] == ContentTypeEnum.FORM_URLENCODED) {
+  //       // config.params = qs.stringify(config.params, { arrayFormat: 'brackets' })
+  //       config.data = qs.stringify(config.data, { arrayFormat: 'brackets' })
+  //     }
+  //   }
+  //   return config
+  // },
 
   /**
    * @description: 响应错误处理
