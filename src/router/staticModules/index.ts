@@ -14,8 +14,8 @@ export default [
   // ...externaLink,
   // ...redirect,
   ...home,
-  ...informationReleasePage,
-  ...sentence,
   ...sentenceLibrafy,
   ...addSentence
+  // ...informationReleasePage,
+  // ...sentence
 ]

@@ -20,7 +20,15 @@
       <!--      页头end-->
       <!--      内容区域start-->
       <a-layout-content class="layout-content">
-        <tabs-view />
+        <div class="tabs-view-content">
+          <a-card>
+            <router-view v-slot="{ Component }">
+              <!-- <keep-alive> -->
+              <component :is="Component" />
+              <!-- </keep-alive> -->
+            </router-view>
+          </a-card>
+        </div>
       </a-layout-content>
       <!--      内容区域end-->
       <!--      页脚start-->
@@ -68,10 +76,10 @@ export default defineComponent({
 .layout {
   display: flex;
   height: 100vh;
-  overflow: hidden;
+  overflow: scroll;
 
   .ant-layout {
-    overflow: hidden;
+    overflow: scroll;
   }
 
   .layout-content {

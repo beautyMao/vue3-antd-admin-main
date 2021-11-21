@@ -16,8 +16,6 @@ export const actions = {
         const ex = 7 * 24 * 60 * 60 * 1000
         Storage.set(ACCESS_TOKEN, token, ex)
         commit('setToken', token)
-        // todo
-        // commit('setUserInfo', result)
       }
       return Promise.resolve(response)
     } catch (e) {

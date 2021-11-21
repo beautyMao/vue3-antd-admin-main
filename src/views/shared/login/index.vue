@@ -66,7 +66,7 @@ export default defineComponent({
     getCaptchaImage().then((res) => {
       const { img } = res
       imgSrc.value = 'data:image/gif;base64,' + img
-      uuid = res.uuid
+      uuid = res?.uuid
     })
 
     const store = useStore()

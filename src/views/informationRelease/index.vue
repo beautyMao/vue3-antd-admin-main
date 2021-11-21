@@ -61,7 +61,8 @@ export default defineComponent({
      * @description 加载表格数据
      */
     const loadData = () => {
-      return getPublishList()
+      // return getPublishList()
+      // return {}
     }
 
     // 删除多项

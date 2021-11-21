@@ -1,5 +1,8 @@
 import http from '@/utils/http/axios'
-
+import { Storage } from '@/utils/Storage'
+import { ACCESS_TOKEN } from '@/store/mutation-types'
+import { RequestEnum } from '@/enums/httpEnum'
+const token = Storage.get(ACCESS_TOKEN)
 /**
  * @description: 语法分析
  * {
@@ -11,7 +14,10 @@ import http from '@/utils/http/axios'
 export function postAnalysis(params) {
   return http.request({
     url: `/analysis`,
-    method: 'POST',
+    method: RequestEnum.POST,
+    headers: {
+      Authorization: token
+    },
     params
   })
 }

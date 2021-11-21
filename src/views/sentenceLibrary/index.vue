@@ -2,10 +2,11 @@
   <a-button class="editable-add-btn" style="margin-bottom: 8px" @click="handleAdd">添加</a-button>
 
   <a-table
+    ref="tableRef"
     :columns="columns"
     :data-source="tableData"
     :loading="loading"
-    ref="tableRef"
+    :pagination="false"
     :rowKey="
       (record, index) => {
         return index
@@ -29,7 +30,7 @@
 
 <script lang="ts">
 import { useRoute, useRouter } from 'vue-router'
-import { defineComponent, createVNode, onMounted, ref } from 'vue'
+import { defineComponent, createVNode, onMounted, ref, onUpdated } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import { QuestionCircleOutlined } from '@ant-design/icons-vue'
 
@@ -73,9 +74,21 @@ export default defineComponent({
           if (code != 200) {
             message.error(msg)
           }
-          location.reload()
+          await refreshTableData()
+          // state.rowSelection.selectedRowKeys = []
         }
       })
+    }
+
+    const refreshTableData = async () => {
+      loading.value = true
+      const { code, msg, rows, total } = await sentencePublishList()
+      loading.value = false
+      if (code == '200') {
+        tableData.value = rows
+      } else {
+        message.warning(msg)
+      }
     }
 
     const tableData = ref()
@@ -92,7 +105,13 @@ export default defineComponent({
       } else {
         message.warning(msg)
       }
+      console.log('onMounted---')
     })
+
+    onUpdated(() => {
+      console.log('onUpdated---')
+    })
+    console.log('setup---')
     return {
       columns,
       tableData,

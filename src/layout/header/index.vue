@@ -4,7 +4,7 @@
       <span class="menu-fold" @click="() => $emit('update:collapsed', !collapsed)">
         <component :is="collapsed ? 'menu-unfold-outlined' : 'menu-fold-outlined'" />
       </span>
-      <a-breadcrumb>
+      <!-- <a-breadcrumb>
         <template v-for="(routeItem, rotueIndex) in $route.matched" :key="routeItem.name">
           <a-breadcrumb-item>
             <span>{{ routeItem.meta.title }}</span>
@@ -21,25 +21,7 @@
             </template>
           </a-breadcrumb-item>
         </template>
-      </a-breadcrumb>
-    </div>
-    <div class="right-options">
-      <!--      切换全屏-->
-      <component :is="fullscreenIcon" @click="toggleFullScreen" />
-      <Dropdown>
-        <a-avatar>{{ username }}</a-avatar>
-        <template #overlay>
-          <!-- <a-menu>
-            <a-menu-item>
-              <div>个人中心</div>
-            </a-menu-item>
-            <a-menu-divider />
-            <a-menu-item>
-              <div @click.prevent="doLogout"><poweroff-outlined /> 退出登录</div>
-            </a-menu-item>
-          </a-menu> -->
-        </template>
-      </Dropdown>
+      </a-breadcrumb> -->
     </div>
   </ALayoutHeader>
 </template>

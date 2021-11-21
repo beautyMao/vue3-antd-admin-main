@@ -1,13 +1,9 @@
 <template>
   <div class="flex-box">
-    <a-textarea
-      v-model:value="value"
-      placeholder="Autosize height with minimum and maximum number of lines"
-      :auto-size="{ minRows: 2, maxRows: 5 }"
-    />
+    <a-textarea v-model:value="value" :auto-size="{ minRows: 2, maxRows: 5 }" />
 
-    <a-button @click="analysisBtn('+')" type="primary">+</a-button>
-    <a-button @click="analysisBtn('-')" type="primary">-</a-button>
+    <a-button type="primary" @click="analysisBtn('+')">+</a-button>
+    <a-button type="primary" @click="analysisBtn('-')">-</a-button>
   </div>
 </template>
 <script lang="ts">
@@ -21,20 +17,10 @@ export default defineComponent({
   name: 'home',
   components: {},
   setup() {
-    let token = '1454088038817931264'
     let value = ref<string>('')
 
-    getToken().then((e) => {
-      console.log(e)
-
-      // token = e.toString()
-      // token = '1453742585056272384'
-    })
-
     const analysisBtn = (step: StepType) => {
-      console.log(value)
-
-      postAnalysis({ token, sentence: value.value, step }).then((res) => {
+      postAnalysis({ sentence: value.value, step }).then((res) => {
         const newVal = res?.data?.afterAnalysisSentence || ''
         value.value = newVal
       })

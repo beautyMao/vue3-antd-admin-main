@@ -56,3 +56,32 @@ export function delSentencePublish(id: string) {
     }
   })
 }
+
+/**
+ * -信息发布查询 单个
+ * @param params
+ */
+export function getSentencePublish(id) {
+  return http.request({
+    url: [Api.sentencePublish, id].join('/'),
+    method: RequestEnum.GET,
+    headers: {
+      Authorization: token
+    }
+  })
+}
+
+/**
+ * -信息发布修改
+ * @param params
+ */
+export function putSentencePublish(params) {
+  return http.request({
+    url: Api.sentencePublish,
+    method: RequestEnum.PUT,
+    params,
+    headers: {
+      Authorization: token
+    }
+  })
+}
