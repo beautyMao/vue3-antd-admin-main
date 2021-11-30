@@ -192,10 +192,26 @@ export default defineComponent({
         formState.sentenceLibrary[index].sentence.splice(i, 1)
       }
     }
+    //     function formatData(sourceData) {
+    //       let result = {}
+    //       let theme = _.get(sourceData, 'theme')
+    //       let sentenceLibrary= _.get(sentenceLibrary, 'sentenceLibrary',[]).map(obj=>{
+    // let sentence = _.get(obj,'sentence',[]).map(son=>{
+    //   return
+    // })
 
-    onUnmounted(() => {
-      console.log('onUnmounted******')
-    })
+    //         return {
+    //               sentenceLibraryName: '',
+    //               originalLink: '',
+    //               originalTitle: '',
+    //               sentence: [{ sentenceContent: '' }, { sentenceContent: '' }]
+    //             }
+    //       })
+    //       _.set(result, 'theme',theme)
+    //       _.set(sentenceLibrary, 'sentenceLibrary',sentenceLibrary)
+
+    //       return result
+    //     }
 
     onMounted(async () => {
       /**
@@ -208,11 +224,32 @@ export default defineComponent({
         const { code, msg, data } = await getSentencePublish(editId.value)
         loading.value = false
         if (code == 200) {
-          const { theme, keyWord, category, sentenceLibrary } = data
+          const { theme, keyWord, category, sentenceLibrary, publishBy, publishTime, visitNumber } =
+            data
+
           formState.theme = theme
           formState.keyWord = keyWord
           formState.category = category
           formState.sentenceLibrary = sentenceLibrary
+
+          // let newsentenceLibrary = []
+          // sentenceLibrary.forEach((item) => {
+          //   let newsentence = []
+          //   newsentence = item.sentence.map((obj) => {
+          //     return {
+          //       sentenceContent: obj.sentenceContent,
+          //       sentenceId: obj.sentenceId
+          //     }
+          //   })
+          //   newsentenceLibrary.push({
+          //     sentenceLibraryName: item.sentenceLibraryName,
+          //     originalLink: item.originalLink,
+          //     originalTitle: item.originalTitle,
+          //     sentence: newsentence
+          //   } as never)
+          // })
+          // formState.sentenceLibrary = newsentenceLibrary
+          // console.log('newsentenceLibrary===🚀===>', newsentenceLibrary)
         } else {
           message.error(msg)
         }

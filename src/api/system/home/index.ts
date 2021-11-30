@@ -15,9 +15,6 @@ export function postAnalysis(params) {
   return http.request({
     url: `/analysis`,
     method: RequestEnum.POST,
-    headers: {
-      Authorization: token
-    },
     params
   })
 }

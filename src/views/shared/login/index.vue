@@ -2,7 +2,7 @@
   <div class="login-box">
     <a-form layout="horizontal" :model="formInline" @submit.prevent="handleSubmit">
       <a-form-item>
-        <a-input v-model:value="formInline.username" size="large" placeholder="admin">
+        <a-input v-model:value="formInline.username" size="large" placeholder="请输入用户名">
           <template #prefix><user-outlined type="user" /></template>
         </a-input>
       </a-form-item>
@@ -11,14 +11,14 @@
           v-model:value="formInline.password"
           size="large"
           type="password"
-          placeholder="admin@123456"
+          placeholder="请输入密码"
           autocomplete="new-password"
         >
           <template #prefix><lock-outlined type="user" /></template>
         </a-input>
       </a-form-item>
       <a-form-item>
-        <a-input v-model:value="formInline.code" placeholder="验证码" style="width: 280px">
+        <a-input v-model:value="formInline.code" placeholder="请输入验证码" style="width: 280px">
           <template #prefix><barcode-outlined type="user" /></template
         ></a-input>
         <img
@@ -83,6 +83,7 @@ export default defineComponent({
 
     const handleSubmit = async () => {
       const { username, password, code } = state.formInline
+      //admin admin@123456
       if (username.trim() == '' || password.trim() == '' || code.trim() == '') {
         return message.warning('用户名、密码或者验证码不能为空！')
       }
@@ -104,9 +105,7 @@ export default defineComponent({
         const toPath = decodeURIComponent((route.query?.redirect || '/') as string)
         message.success('登录成功！')
         router.replace(toPath).then((_) => {
-          if (route.name == 'login') {
-            router.replace('/')
-          }
+          router.replace('/sentence-library')
         })
       } else {
         message.info(msg || '登录失败')

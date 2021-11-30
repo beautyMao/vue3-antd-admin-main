@@ -1,27 +1,23 @@
 <template>
   <ALayoutHeader class="layout-header">
-    <div class="left-options">
-      <span class="menu-fold" @click="() => $emit('update:collapsed', !collapsed)">
-        <component :is="collapsed ? 'menu-unfold-outlined' : 'menu-fold-outlined'" />
-      </span>
-      <!-- <a-breadcrumb>
-        <template v-for="(routeItem, rotueIndex) in $route.matched" :key="routeItem.name">
-          <a-breadcrumb-item>
-            <span>{{ routeItem.meta.title }}</span>
-            <template v-if="routeItem.children.length" #overlay>
-              <a-menu :selectedKeys="[$route.matched[rotueIndex + 1]?.name]">
-                <template v-for="childItem in routeItem.children">
-                  <a-menu-item v-if="!childItem.meta?.hidden" :key="childItem.name">
-                    <router-link :to="{ name: childItem.name }" custom #="{ navigate }">
-                      <div @click="navigate">{{ childItem.meta?.title }}</div>
-                    </router-link>
-                  </a-menu-item>
-                </template>
-              </a-menu>
-            </template>
-          </a-breadcrumb-item>
+    <div class="left-options"></div>
+    <div class="right-options">
+      <!--      切换全屏-->
+      <!-- <component :is="fullscreenIcon" @click="toggleFullScreen" /> -->
+      <Dropdown>
+        <a-avatar>{{ username }}</a-avatar>
+        <template #overlay>
+          <a-menu>
+            <a-menu-item>
+              <div>个人中心</div>
+            </a-menu-item>
+            <a-menu-divider />
+            <a-menu-item>
+              <div @click.prevent="doLogout"><poweroff-outlined /> 退出登录</div>
+            </a-menu-item>
+          </a-menu>
         </template>
-      </a-breadcrumb> -->
+      </Dropdown>
     </div>
   </ALayoutHeader>
 </template>
@@ -33,7 +29,7 @@ import components from '@/layout/header/components'
 import { message, Modal } from 'ant-design-vue'
 import { QuestionCircleOutlined } from '@ant-design/icons-vue'
 import { useStore } from '@/store'
-import { TABS_ROUTES } from '@/store/mutation-types'
+import { ACCESS_TOKEN } from '@/store/mutation-types'
 
 export default defineComponent({
   name: 'PageHeader',
@@ -63,11 +59,10 @@ export default defineComponent({
         icon: createVNode(QuestionCircleOutlined),
         onOk: () => {
           console.log(router, '退出登录')
-          // logout({})
           store.dispatch('user/logout').then((res) => {
             message.success('成功退出登录')
             // 移除标签页
-            localStorage.removeItem(TABS_ROUTES)
+            localStorage.removeItem(ACCESS_TOKEN)
             router
               .replace({
                 name: 'login',
@@ -81,29 +76,9 @@ export default defineComponent({
       })
     }
 
-    // 切换全屏图标
-    const toggleFullscreenIcon = () =>
-      (state.fullscreenIcon =
-        document.fullscreenElement !== null ? 'FullscreenExitOutlined' : 'FullscreenOutlined')
-
-    // 监听全屏切换事件
-    document.addEventListener('fullscreenchange', toggleFullscreenIcon)
-
-    // 全屏切换
-    const toggleFullScreen = () => {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen()
-      } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen()
-        }
-      }
-    }
-
     return {
       ...toRefs(state),
       username,
-      toggleFullScreen,
       doLogout
     }
   }

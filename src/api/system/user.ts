@@ -72,6 +72,16 @@ export function logout(params) {
 /**
  * @description: 获取token
  */
+export function getTokenByHome() {
+  return http.request({
+    url: '/token',
+    method: 'get'
+  })
+}
+
+/**
+ * @description: 获取token
+ */
 export function getToken() {
   return http.request({
     url: '/token',

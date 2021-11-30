@@ -14,6 +14,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/icons',
     name: 'icons',
     component: () => import(/* webpackChunkName: "icons" */ '@/views/shared/icons/index.vue')
+  },
+  {
+    path: '/home',
+    name: 'home',
+    component: () => import(/* webpackChunkName: "demos-button" */ '@/views/home/index.vue')
   }
 ]
 

@@ -7,10 +7,10 @@ import { debounce } from '@/utils/lodashChunk'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
-const allowList = ['login', 'icons', 'error', 'error-404'] // no redirect whitelist
+const allowList = ['login', 'home', 'error', 'error-404'] // no redirect whitelist
 
 const loginRoutePath = '/login'
-const defaultRoutePath = '/home'
+const defaultRoutePath = '/sentence-library'
 
 // 是否需要从后端获取菜单
 const isGetMenus = debounce(
@@ -43,6 +43,9 @@ export function createRouterGuards(router: Router) {
   router.beforeEach((to, from, next) => {
     NProgress.start() // start progress bar
     const token = Storage.get(ACCESS_TOKEN)
+    if (from.name === 'home' && to.name === 'login') {
+      next()
+    }
     if (token) {
       if (to.name === 'login') {
         next({ path: defaultRoutePath })

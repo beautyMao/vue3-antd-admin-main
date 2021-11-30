@@ -4,7 +4,7 @@ import redirect from './redirect'
 import externaLink from './externa-link'
 import informationReleasePage from './information-release-page'
 import sentence from './sentence'
-import home from './home'
+// import home from './home'
 import addSentence from './addSentence'
 import sentenceLibrafy from './sentenceLibrafy'
 
@@ -13,7 +13,7 @@ export default [
   // ...demos,
   // ...externaLink,
   // ...redirect,
-  ...home,
+  // ...home,
   ...sentenceLibrafy,
   ...addSentence
   // ...informationReleasePage,

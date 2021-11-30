@@ -31,9 +31,6 @@
         </div>
       </a-layout-content>
       <!--      内容区域end-->
-      <!--      页脚start-->
-      <page-footer />
-      <!--      页脚end-->
     </a-layout>
   </a-layout>
 </template>
@@ -45,7 +42,6 @@ import Logo from './logo/index.vue'
 import { TabsView } from './tabs'
 import AsideMenu from './menu/menu.vue'
 import PageHeader from './header/index.vue'
-import PageFooter from './footer'
 
 export default defineComponent({
   name: 'Layout',
@@ -54,7 +50,6 @@ export default defineComponent({
     PageHeader,
     AsideMenu,
     Logo,
-    PageFooter,
     [Layout.name]: Layout,
     [Layout.Content.name]: Layout.Content,
     [Layout.Sider.name]: Layout.Sider
@@ -62,7 +57,7 @@ export default defineComponent({
   setup() {
     const collapsed = ref<boolean>(false)
     // 自定义侧边栏菜单收缩和展开时的宽度
-    const asiderWidth = computed(() => (collapsed.value ? 80 : 208))
+    const asiderWidth = computed(() => (collapsed.value ? 80 : 228))
 
     return {
       collapsed,
