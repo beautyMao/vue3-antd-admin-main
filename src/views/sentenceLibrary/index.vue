@@ -32,7 +32,7 @@
 </template>
 
 <script lang="ts">
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { defineComponent, createVNode, onMounted, ref, onUpdated } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import { QuestionCircleOutlined } from '@ant-design/icons-vue'
