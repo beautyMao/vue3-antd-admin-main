@@ -5,7 +5,9 @@ import { Storage } from '@/utils/Storage'
 import { RequestEnum } from '@/enums/httpEnum'
 const token = Storage.get(ACCESS_TOKEN)
 enum Api {
-  sentencePublish = '/sentence/publish'
+  sentencePublish = '/sentence/publish',
+  sentenceCategory = '/sentence/category',
+  systemDict = 'system/dict/data/dictType'
 }
 /**
  * @description: 信息发布新增
@@ -80,6 +82,46 @@ export function putSentencePublish(params) {
     url: Api.sentencePublish,
     method: RequestEnum.PUT,
     params,
+    headers: {
+      Authorization: token
+    }
+  })
+}
+
+/**
+ * -获取主类别
+ * @param params
+ */
+export function getSystemDict() {
+  return http.request({
+    url: [Api.systemDict, 'category'].join('/'),
+    method: RequestEnum.GET,
+    headers: {
+      Authorization: token
+    }
+  })
+}
+
+/**
+ * - 获取子类别
+ * @param params
+ */
+export function getSystemDictById(id) {
+  return http.request({
+    url: [Api.systemDict, id].join('/'),
+    method: RequestEnum.GET,
+    headers: {
+      Authorization: token
+    }
+  })
+}
+/**
+ * @description:  信息发布查询 所有
+ */
+export function getSentenceCategory() {
+  return http.request({
+    url: '/sentence/list',
+    method: RequestEnum.GET,
     headers: {
       Authorization: token
     }

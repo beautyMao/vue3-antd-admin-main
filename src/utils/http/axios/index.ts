@@ -48,7 +48,7 @@ const transform: AxiosTransform = {
       Modal.destroyAll()
       Modal.warning({
         title: '提示',
-        content: '登录身份已失效,请重新登录!',
+        content: msg,
         onOk: () => {
           router.replace({
             name: 'login',
@@ -56,7 +56,7 @@ const transform: AxiosTransform = {
               redirect: router.currentRoute.value.fullPath
             }
           })
-          Storage.clear()
+          // Storage.clear()
         }
       })
       return reject(new Error(timeoutMsg))

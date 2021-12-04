@@ -23,20 +23,26 @@
         <a-input v-model:value="formState.keyWord" />
       </a-form-item>
 
-      <!-- <a-form-item
-      label="类别"
-      name="category"
-      :rules="{
-        required: true,
-        message: '请选择类别',
-        type: 'array',
-        trigger: 'select'
-      }"
-    >
-      <a-cascader v-model:value="formState.category" :options="stOptions" />
-    </a-form-item> -->
-
       <a-form-item
+        label="类别"
+        name="category"
+        :rules="{
+          required: true,
+          message: '请选择类别',
+          type: 'array',
+          trigger: 'select'
+        }"
+      >
+        <a-cascader
+          v-model:value="formState.category"
+          :options="categoryOptions"
+          :load-data="loadCategoryData"
+          placeholder=""
+          change-on-select
+        />
+      </a-form-item>
+
+      <!-- <a-form-item
         label="类别"
         name="category"
         :rules="{
@@ -46,7 +52,7 @@
         }"
       >
         <a-input v-model:value="formState.category" />
-      </a-form-item>
+      </a-form-item> -->
 
       <div v-for="(item, index) in formState.sentenceLibrary" :key="index">
         <a-form-item
@@ -82,7 +88,7 @@
         <a-form-item
           v-for="(s, i) in item.sentence"
           :key="i"
-          :label="'语句' + (i + 1)"
+          label="语句"
           :name="['sentenceLibrary', index, 'sentence', i, 'sentenceContent']"
           :rules="{
             required: i == 0 ? true : false,
@@ -107,12 +113,19 @@
   </a-form>
 </template>
 <script lang="ts">
-import { defineComponent, reactive, toRaw, ref, onMounted, onUnmounted, onUpdated } from 'vue'
+import { defineComponent, reactive, toRefs, ref, onMounted, onUnmounted, onUpdated } from 'vue'
 import { Cascader, Spin, message } from 'ant-design-vue'
 import { MinusCircleOutlined } from '@ant-design/icons-vue'
 import { useRoute, useRouter } from 'vue-router'
 import { stOptions } from '@/mock/index'
-import { sentencePublish, getSentencePublish, putSentencePublish } from '@/api/system/sentence'
+
+import {
+  sentencePublish,
+  getSentencePublish,
+  putSentencePublish,
+  getSystemDict,
+  getSystemDictById
+} from '@/api/system/sentence'
 
 interface sentence_library {
   value: string
@@ -143,8 +156,39 @@ export default defineComponent({
         }
       ]
     })
+    // 类别加载选项
+    let categoryOptions: any = reactive([])
+    loading.value = true
+    getSystemDict().then((res) => {
+      const list = res.data.map((item) => {
+        return {
+          value: item.dictLabel,
+          label: item.dictLabel,
+          isLeaf: false
+        }
+      })
+      Object.assign(categoryOptions, list)
+      loading.value = false
+    })
+
+    const loadCategoryData = (selectedOptions) => {
+      const targetOption = selectedOptions[selectedOptions.length - 1]
+      targetOption.loading = true
+
+      getSystemDictById(targetOption.value).then((res) => {
+        const list = res.data.map((item) => {
+          return {
+            label: item.dictLabel,
+            value: item.dictLabel
+          }
+        })
+        targetOption.loading = false
+        targetOption.children = list
+      })
+    }
 
     const onSubmit = () => {
+      formRef
       formRef.value
         .validate()
         .then(async () => {
@@ -192,26 +236,6 @@ export default defineComponent({
         formState.sentenceLibrary[index].sentence.splice(i, 1)
       }
     }
-    //     function formatData(sourceData) {
-    //       let result = {}
-    //       let theme = _.get(sourceData, 'theme')
-    //       let sentenceLibrary= _.get(sentenceLibrary, 'sentenceLibrary',[]).map(obj=>{
-    // let sentence = _.get(obj,'sentence',[]).map(son=>{
-    //   return
-    // })
-
-    //         return {
-    //               sentenceLibraryName: '',
-    //               originalLink: '',
-    //               originalTitle: '',
-    //               sentence: [{ sentenceContent: '' }, { sentenceContent: '' }]
-    //             }
-    //       })
-    //       _.set(result, 'theme',theme)
-    //       _.set(sentenceLibrary, 'sentenceLibrary',sentenceLibrary)
-
-    //       return result
-    //     }
 
     onMounted(async () => {
       /**
@@ -226,30 +250,10 @@ export default defineComponent({
         if (code == 200) {
           const { theme, keyWord, category, sentenceLibrary, publishBy, publishTime, visitNumber } =
             data
-
           formState.theme = theme
           formState.keyWord = keyWord
           formState.category = category
           formState.sentenceLibrary = sentenceLibrary
-
-          // let newsentenceLibrary = []
-          // sentenceLibrary.forEach((item) => {
-          //   let newsentence = []
-          //   newsentence = item.sentence.map((obj) => {
-          //     return {
-          //       sentenceContent: obj.sentenceContent,
-          //       sentenceId: obj.sentenceId
-          //     }
-          //   })
-          //   newsentenceLibrary.push({
-          //     sentenceLibraryName: item.sentenceLibraryName,
-          //     originalLink: item.originalLink,
-          //     originalTitle: item.originalTitle,
-          //     sentence: newsentence
-          //   } as never)
-          // })
-          // formState.sentenceLibrary = newsentenceLibrary
-          // console.log('newsentenceLibrary===🚀===>', newsentenceLibrary)
         } else {
           message.error(msg)
         }
@@ -261,7 +265,8 @@ export default defineComponent({
       wrapperCol: { span: 14 },
       formState,
       onSubmit,
-      stOptions,
+      categoryOptions,
+      loadCategoryData,
       addSentenceLibrary,
       removeSentenceLibrary,
       addSentenContent,

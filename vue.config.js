@@ -53,7 +53,7 @@ module.exports = {
       // ])
     }
     config.plugin('html').tap((args) => {
-      args[0].title = '后台管理系统'
+      args[0].title = '首页'
       return args
     })
 

@@ -22,7 +22,10 @@
     <template #expandedRowRender="{ record }">
       <!-- {{ record.keyWord }} -->
       <div v-for="(item, i) in record.sentenceLibrary" :key="i">
-        语句库： {{ item.sentenceLibraryName }}
+        <div>语句库： {{ item.sentenceLibraryName }}</div>
+        <div v-for="(sent, ii) in item.sentence.slice(0, 5)" :key="ii" style="margin-left: 20px">
+          语句:{{ sent.sentenceContent }} 访问次数：{{ record.visitNumber }}
+        </div>
       </div>
     </template>
   </a-table>
@@ -105,13 +108,8 @@ export default defineComponent({
       } else {
         message.warning(msg)
       }
-      console.log('onMounted---')
     })
 
-    onUpdated(() => {
-      console.log('onUpdated---')
-    })
-    console.log('setup---')
     return {
       columns,
       tableData,
