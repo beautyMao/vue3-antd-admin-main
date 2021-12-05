@@ -13,9 +13,10 @@
           class="sen"
           @click="emit('setSen', sen.sentenceContent)"
         >
+          <span>·</span>
           {{ sen.sentenceContent }}
         </li>
-        <li @click="emit('goPage', Object.keys(item)[0])">更多...</li>
+        <li @click="emit('goPage', Object.keys(item)[0])" style="text-align: right">更多...</li>
       </ul>
     </div>
   </a-spin>
@@ -65,18 +66,22 @@ export default defineComponent({
       cursor: pointer;
     }
     .sen {
-      color: blue;
-      text-decoration: underline;
+      color: #333;
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 2;
       overflow: hidden;
-      &:hover {
-      }
+      line-height: 20px;
+      list-style-type: disc;
     }
+
     .title {
       div {
         display: inline-block;
+        font-size: 20px;
+        &:hover {
+          text-decoration: underline;
+        }
       }
     }
   }

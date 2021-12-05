@@ -143,6 +143,8 @@ export default defineComponent({
     const loading = ref(false)
     const route = useRoute()
     const editId = ref()
+    const categoryOptions: any = reactive([])
+
     const formState = reactive({
       theme: '',
       keyWord: '',
@@ -155,20 +157,6 @@ export default defineComponent({
           sentence: [{ sentenceContent: '' }, { sentenceContent: '' }]
         }
       ]
-    })
-    // 类别加载选项
-    let categoryOptions: any = reactive([])
-    loading.value = true
-    getSystemDict().then((res) => {
-      const list = res.data.map((item) => {
-        return {
-          value: item.dictLabel,
-          label: item.dictLabel,
-          isLeaf: false
-        }
-      })
-      Object.assign(categoryOptions, list)
-      loading.value = false
     })
 
     const loadCategoryData = (selectedOptions) => {
@@ -241,9 +229,10 @@ export default defineComponent({
       /**
        * @description 编辑或者新增
        */
-      editId.value = route.query.id
 
-      if (editId.value) {
+      if (route.query.id) {
+        console.log('***编辑****')
+        editId.value = route.query.id
         loading.value = true
         const { code, msg, data } = await getSentencePublish(editId.value)
         loading.value = false
@@ -257,6 +246,25 @@ export default defineComponent({
         } else {
           message.error(msg)
         }
+      } else {
+        console.log('***新增****')
+      }
+
+      // 类别加载选项
+      loading.value = true
+      const { code, msg, data } = await getSystemDict()
+      loading.value = false
+      if (code == 200) {
+        const list = data.map((item) => {
+          return {
+            value: item.dictLabel,
+            label: item.dictLabel,
+            isLeaf: false
+          }
+        })
+        Object.assign(categoryOptions, list)
+      } else {
+        message.error(msg)
       }
     })
 
