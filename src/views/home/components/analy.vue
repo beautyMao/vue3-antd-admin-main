@@ -6,8 +6,8 @@
       :auto-size="{ minRows: 2, maxRows: 5 }"
     />
 
-    <a-button type="primary" @click="analysisBtn('+')">+</a-button>
-    <a-button type="primary" @click="analysisBtn('-')">-</a-button>
+    <a-button type="primary" size="large" @click="analysisBtn('+')">+</a-button>
+    <a-button type="primary" size="large" @click="analysisBtn('-')">-</a-button>
   </div>
   <div class="lqbz-box flex-box">
     <div style="width: 600px">
