@@ -1,7 +1,9 @@
 <template>
   <div class="box">
     <s-header />
+
     <s-analy :listVal="listVal" />
+    <div class="title" @click="goBack">首页--{{ cid }}</div>
     <div class="content">
       <div class="left">
         <s-table :loading="loading" :tableList="tableList" @goPage="goPage" @setSen="setSen" />
@@ -17,7 +19,9 @@ import { message } from 'ant-design-vue'
 
 import sHeader from './components/header.vue'
 import sAnaly from './components/analy.vue'
+// import sTable2 from './components/table2.vue'
 import sTable from './components/table.vue'
+
 import { getSentenceLatestRelease, getSentenceLatestReleaseById } from '@/api/system/home'
 
 export default defineComponent({
@@ -73,9 +77,15 @@ export default defineComponent({
       timer = null
     })
 
+    const goBack = () => {
+      window.history.go(-1)
+    }
+
     return {
       goPage,
       setSen,
+      goBack,
+      cid,
       tableList,
       listVal,
       loading
@@ -88,7 +98,10 @@ export default defineComponent({
   width: 980px;
   margin: 0 auto;
 }
-
+.title {
+  cursor: pointer;
+  font-size: 20px;
+}
 .content {
   display: flex;
   justify-content: space-between;

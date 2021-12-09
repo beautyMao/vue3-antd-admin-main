@@ -1,11 +1,11 @@
 <template>
   <div class="header">
-    <!-- <div class="kong">预留广告位</div> -->
-    <img src="~@/assets/analysis.svg" class="logo" />
     <div class="login-box">
       <a-button style="margin-right: 20px" @click="goLogin"> 登录 </a-button>
       <a-button> 注册 </a-button>
     </div>
+    <!-- <div class="kong">预留广告位</div> -->
+    <img src="~@/assets/analysis.svg" class="logo" />
   </div>
 </template>
 <script lang="ts">
@@ -24,8 +24,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 .header {
   margin: 20px 0;
-  display: flex;
-  justify-content: space-between;
+
   .kong {
     border: 1px solid #000;
     width: 600px;
@@ -34,9 +33,15 @@ export default defineComponent({
     font-size: 20px;
     line-height: 40px;
   }
+  .login-box {
+    display: flex;
+    justify-content: flex-end;
+  }
   .logo {
     width: 455px;
     height: 160px;
+    margin: 0 auto;
+    display: block;
   }
 }
 </style>

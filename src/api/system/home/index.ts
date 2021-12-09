@@ -39,9 +39,6 @@ export function getSentenceLatestRelease() {
 export function getSentenceLatestReleaseById(id) {
   return http.request({
     url: [Api.sentenceLatestRelease, id].join('/'),
-    method: RequestEnum.GET,
-    headers: {
-      Authorization: token
-    }
+    method: RequestEnum.GET
   })
 }

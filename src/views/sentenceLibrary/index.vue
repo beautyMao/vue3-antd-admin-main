@@ -13,6 +13,11 @@
       }
     "
   >
+    <template #category="{ text }">
+      <span v-for="(item, i) in text" :key="i"
+        >{{ item }} <i v-if="i != text.length - 1">/</i></span
+      >
+    </template>
     <template #action="{ record }">
       <a-button type="primary" style="margin-right: 8px" @click="editItem(record.sentencePublishId)"
         >编辑</a-button
@@ -44,7 +49,7 @@ import { data } from '@/mock/sentenceL.js'
 const columns = [
   { title: '主题', dataIndex: 'theme', key: 'theme' },
   { title: '关键字', dataIndex: 'keyWord', key: 'keyWord' },
-  { title: '类别', dataIndex: 'category', key: 'category' },
+  { title: '类别', dataIndex: 'category', key: 'category', slots: { customRender: 'category' } },
   { title: '发布者', dataIndex: 'publishBy', key: 'publishBy' },
   { title: '发布日期', dataIndex: 'publishTime', key: 'publishTime' },
   { title: '访问次数', dataIndex: 'visitNumber', key: 'visitNumber' },

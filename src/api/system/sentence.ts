@@ -7,8 +7,9 @@ const token = Storage.get(ACCESS_TOKEN)
 enum Api {
   sentencePublish = '/sentence/publish',
   sentenceCategory = '/sentence/category',
-  systemDict = 'system/dict/data/dictType'
+  systemDict = '/system/dict/data/dictType'
 }
+
 /**
  * @description: 信息发布新增
  */

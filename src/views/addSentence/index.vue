@@ -42,18 +42,6 @@
         />
       </a-form-item>
 
-      <!-- <a-form-item
-        label="类别"
-        name="category"
-        :rules="{
-          required: true,
-          message: '请输入类别',
-          trigger: 'blur'
-        }"
-      >
-        <a-input v-model:value="formState.category" />
-      </a-form-item> -->
-
       <div v-for="(item, index) in formState.sentenceLibrary" :key="index">
         <a-form-item
           v-bind="wrapperCol"
@@ -96,7 +84,7 @@
             trigger: 'blur'
           }"
         >
-          <a-input v-model:value="s.sentenceContent" style="width: 100%; margin-right: 8px" />
+          <a-textarea v-model:value="s.sentenceContent" style="width: 100%; margin-right: 8px" />
           <div class="btn-box">
             <a-button type="button" style="margin-right: 8px" @click="addSentenContent(index, i)"
               >添加</a-button
@@ -113,7 +101,7 @@
   </a-form>
 </template>
 <script lang="ts">
-import { defineComponent, reactive, toRefs, ref, onMounted, onUnmounted, onUpdated } from 'vue'
+import { defineComponent, reactive, toRefs, ref, onMounted, watch, onUpdated } from 'vue'
 import { Cascader, Spin, message } from 'ant-design-vue'
 import { MinusCircleOutlined } from '@ant-design/icons-vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -132,6 +120,33 @@ interface sentence_library {
   key: number
 }
 
+const initFormData = {
+  theme: '',
+  keyWord: '',
+  category: '',
+  sentenceLibrary: [
+    {
+      sentenceLibraryName: '',
+      originalLink: '',
+      originalTitle: '',
+      sentence: [{ sentenceContent: '' }]
+    }
+  ]
+}
+const initFormDataString = {
+  theme: '',
+  keyWord: '',
+  category: '',
+  sentenceLibrary: [
+    {
+      sentenceLibraryName: '',
+      originalLink: '',
+      originalTitle: '',
+      sentence: [{ sentenceContent: '' }]
+    }
+  ]
+}
+
 export default defineComponent({
   components: {
     [Cascader.name]: Cascader,
@@ -145,19 +160,7 @@ export default defineComponent({
     const editId = ref()
     const categoryOptions: any = reactive([])
 
-    const formState = reactive({
-      theme: '',
-      keyWord: '',
-      category: '',
-      sentenceLibrary: [
-        {
-          sentenceLibraryName: '',
-          originalLink: '',
-          originalTitle: '',
-          sentence: [{ sentenceContent: '' }, { sentenceContent: '' }]
-        }
-      ]
-    })
+    const formState = reactive(initFormData)
 
     const loadCategoryData = (selectedOptions) => {
       const targetOption = selectedOptions[selectedOptions.length - 1]
@@ -181,7 +184,7 @@ export default defineComponent({
         .validate()
         .then(async () => {
           let res
-
+          console.log(formState)
           if (editId.value) {
             res = await putSentencePublish({ sentencePublishId: editId.value, ...formState })
           } else {
@@ -191,6 +194,7 @@ export default defineComponent({
           if (res.code == 200) {
             message.success(res.msg, 10)
             // router.push('/sentence-library')
+            window.location.reload()
           } else {
             message.error(res.msg, 10)
           }
@@ -214,7 +218,7 @@ export default defineComponent({
       })
     }
     const resetForm = () => {
-      formRef.value.resetFields()
+      Object.assign(formState, initFormDataString)
     }
     const addSentenContent = (index, i) => {
       formState.sentenceLibrary[index].sentence.push({ sentenceContent: '' })
@@ -225,13 +229,20 @@ export default defineComponent({
       }
     }
 
+    watch(
+      () => route.query.id,
+      (newVal) => {
+        if (!route.query.id) {
+          Object.assign(formState, initFormDataString)
+        }
+      }
+    )
     onMounted(async () => {
       /**
        * @description 编辑或者新增
        */
-
+      let categoryVal
       if (route.query.id) {
-        console.log('***编辑****')
         editId.value = route.query.id
         loading.value = true
         const { code, msg, data } = await getSentencePublish(editId.value)
@@ -243,25 +254,53 @@ export default defineComponent({
           formState.keyWord = keyWord
           formState.category = category
           formState.sentenceLibrary = sentenceLibrary
+          categoryVal = category
         } else {
           message.error(msg)
         }
       } else {
-        console.log('***新增****')
+        formRef.value.resetFields()
       }
 
       // 类别加载选项
       loading.value = true
-      const { code, msg, data } = await getSystemDict()
+      const { code, msg, data } = (await getSystemDict()) || {}
       loading.value = false
+
       if (code == 200) {
-        const list = data.map((item) => {
-          return {
-            value: item.dictLabel,
-            label: item.dictLabel,
-            isLeaf: false
+        let child
+        // 获取子类
+        if (route.query.id && categoryVal[0]) {
+          const { code: code2, msg: msg2, data: data2 } = await getSystemDictById(categoryVal[0])
+          if (code2 == 200) {
+            child = data2.map((item) => {
+              return {
+                label: item.dictLabel,
+                value: item.dictLabel
+              }
+            })
+          } else {
+            message.error(msg2)
+          }
+        }
+
+        const list = data?.map((item) => {
+          if (item.dictLabel == formState.category[0]) {
+            return {
+              value: item.dictLabel,
+              label: item.dictLabel,
+              isLeaf: false,
+              children: child
+            }
+          } else {
+            return {
+              value: item.dictLabel,
+              label: item.dictLabel,
+              isLeaf: false
+            }
           }
         })
+
         Object.assign(categoryOptions, list)
       } else {
         message.error(msg)

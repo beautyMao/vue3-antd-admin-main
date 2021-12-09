@@ -22,36 +22,30 @@ import { getSentenceLatestRelease, getSentenceLatestReleaseById } from '@/api/sy
 
 export default defineComponent({
   components: { sHeader, sAnaly, sTable },
+
   setup() {
     const tableList = reactive([])
     const listVal = ref('')
     const router = useRouter()
 
     const loading = ref(false)
-
-    getSentenceLatestRelease().then((res) => {
-      const { data, code, msg } = res
+    const getSentenceData = async () => {
+      loading.value = true
+      Object.assign(tableList, [])
+      const { data, code, msg } = await getSentenceLatestRelease()
+      loading.value = false
       if (code == 200) {
         Object.assign(tableList, data)
       } else {
         message.error(msg)
       }
-    })
+    }
 
     let timer
     onMounted(() => {
+      getSentenceData()
       // 轮询 每五分钟调用接口 关闭页面时卸载轮询
-      timer = setInterval(async () => {
-        loading.value = true
-        Object.assign(tableList, [])
-        const { data, code, msg } = await getSentenceLatestRelease()
-        loading.value = false
-        if (code == 200) {
-          Object.assign(tableList, data)
-        } else {
-          message.error(msg)
-        }
-      }, 50000)
+      timer = setInterval(() => getSentenceData(), 50000)
     })
     //关闭页面时卸载轮询
     onBeforeUnmount(() => {

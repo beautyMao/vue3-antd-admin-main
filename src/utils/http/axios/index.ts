@@ -34,8 +34,7 @@ const transform: AxiosTransform = {
     } = options
 
     const reject = Promise.reject
-    const { code, msg } = res.data
-
+    const { code, msg } = res?.data || {}
     if (code == 200 || code == null || code == 0) {
       return res.data
     }
