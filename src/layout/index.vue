@@ -22,7 +22,7 @@
       <a-layout-content class="layout-content">
         <div class="tabs-view-content">
           <a-card>
-            <router-view v-slot="{ Component }">
+            <router-view v-slot="{ Component }" v-if="isRouterAlive">
               <!-- <keep-alive> -->
               <component :is="Component" />
               <!-- </keep-alive> -->
@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue'
+import { defineComponent, ref, computed, provide, nextTick } from 'vue'
 import { Layout } from 'ant-design-vue'
 import Logo from './logo/index.vue'
 import { TabsView } from './tabs'
@@ -56,12 +56,24 @@ export default defineComponent({
   },
   setup() {
     const collapsed = ref<boolean>(false)
+
+    const isRouterAlive = ref(true)
+    const reload = () => {
+      console.log('刷新')
+      isRouterAlive.value = false
+      nextTick(() => {
+        isRouterAlive.value = true
+      })
+    }
+    provide('reload', reload) // provide的第一个为名称，第二个值为所需要传的参数
+
     // 自定义侧边栏菜单收缩和展开时的宽度
     const asiderWidth = computed(() => (collapsed.value ? 80 : 228))
 
     return {
       collapsed,
-      asiderWidth
+      asiderWidth,
+      isRouterAlive
     }
   }
 })

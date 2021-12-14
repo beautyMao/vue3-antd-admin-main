@@ -102,7 +102,7 @@
   </a-form>
 </template>
 <script lang="ts">
-import { defineComponent, reactive, onUnmounted, ref, onMounted, watch, unref } from 'vue'
+import { defineComponent, reactive, onUnmounted, ref, onMounted, watch, unref, inject } from 'vue'
 import { Cascader, Spin, message } from 'ant-design-vue'
 import { MinusCircleOutlined } from '@ant-design/icons-vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -161,11 +161,10 @@ export default defineComponent({
     const editId = ref()
     const categoryOptions: any = reactive([])
     const canShow = ref(true)
+    const reload: any = inject('reload')
 
     onUnmounted(() => {
-      const el = unref(formRef)
-      canShow.value = false
-      el && document.body.removeChild(el)
+      console.log('onUnmounted===🚀===>卸载组件了')
     })
 
     const formState = reactive(initFormData)
@@ -200,8 +199,7 @@ export default defineComponent({
 
           if (res.code == 200) {
             message.success(res.msg, 10)
-            // router.push('/sentence-library')
-            // window.location.reload()
+            reload()
           } else {
             message.error(res.msg, 10)
           }
@@ -251,14 +249,17 @@ export default defineComponent({
        * @description 编辑或者新增
        */
       let categoryVal
-      if (route.query.id) {
-        editId.value = route.query.id
+      let routerId = route.query.id
+      if (routerId) {
+        console.log('route.query.id===🚀===>', routerId)
+        editId.value = routerId
         loading.value = true
-        const { code, msg, data } = await getSentencePublish(editId.value)
+        const { code, msg, data = {} } = (await getSentencePublish(routerId)) || {}
+        console.log('code===🚀===>', code)
         loading.value = false
+
         if (code == 200) {
-          const { theme, keyWord, category, sentenceLibrary, publishBy, publishTime, visitNumber } =
-            data
+          const { theme, keyWord, category = [], sentenceLibrary } = data
           formState.theme = theme
           formState.keyWord = keyWord
           formState.category = category
@@ -277,35 +278,43 @@ export default defineComponent({
       if (code == 200) {
         let child
         // 获取子类
-        if (route.query.id && categoryVal[0]) {
-          const { code: code2, msg: msg2, data: data2 } = await getSystemDictById(categoryVal[0])
+        if (routerId && categoryVal?.[0]) {
+          const {
+            code: code2,
+            msg: msg2,
+            data: data2
+          } = (await getSystemDictById(categoryVal[0])) || {}
           if (code2 == 200) {
-            child = data2.map((item) => {
-              return {
-                label: item.dictLabel,
-                value: item.dictLabel
-              }
-            })
+            child =
+              data2?.length > 0 &&
+              data2.map((item) => {
+                return {
+                  label: item?.dictLabel,
+                  value: item?.dictLabel
+                }
+              })
           } else {
             message.error(msg2)
           }
         }
-        const list = data?.map((item) => {
-          if (item.dictLabel == formState.category[0]) {
-            return {
-              value: item.dictLabel,
-              label: item.dictLabel,
-              isLeaf: false,
-              children: child
+        const list =
+          data.length > 0 &&
+          data?.map((item) => {
+            if (item.dictLabel == formState.category[0]) {
+              return {
+                value: item.dictLabel,
+                label: item.dictLabel,
+                isLeaf: false,
+                children: child
+              }
+            } else {
+              return {
+                value: item.dictLabel,
+                label: item.dictLabel,
+                isLeaf: false
+              }
             }
-          } else {
-            return {
-              value: item.dictLabel,
-              label: item.dictLabel,
-              isLeaf: false
-            }
-          }
-        })
+          })
         Object.assign(categoryOptions, list)
       } else {
         message.error(msg)

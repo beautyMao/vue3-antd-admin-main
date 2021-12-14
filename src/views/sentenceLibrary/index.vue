@@ -38,7 +38,7 @@
 
 <script lang="ts">
 import { useRouter } from 'vue-router'
-import { defineComponent, createVNode, onMounted, ref, onUpdated } from 'vue'
+import { defineComponent, createVNode, onMounted, ref, inject } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import { QuestionCircleOutlined } from '@ant-design/icons-vue'
 
@@ -63,6 +63,7 @@ export default defineComponent({
     const router = useRouter()
     const tableRef = ref()
     const loading = ref(false)
+    const reload: any = inject('reload')
 
     const handleAdd = () => {
       router.push('/add-sentence')
@@ -82,8 +83,7 @@ export default defineComponent({
           if (code != 200) {
             message.error(msg)
           }
-          await refreshTableData()
-          // state.rowSelection.selectedRowKeys = []
+          reload()
         }
       })
     }
