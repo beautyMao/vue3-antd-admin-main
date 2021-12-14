@@ -4,10 +4,11 @@ import NProgress from 'nprogress' // progress bar
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { Storage } from '@/utils/Storage'
 import { debounce } from '@/utils/lodashChunk'
+import shared from './staticModules/shared'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
-const allowList = ['login', 'home', 'error', 'error-404'] // no redirect whitelist
+const allowList = shared.map((item) => item.name).concat(['error', 'error-404']) // no redirect whitelist
 
 const loginRoutePath = '/login'
 const defaultRoutePath = '/sentence-library'

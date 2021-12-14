@@ -19,10 +19,9 @@ import { message } from 'ant-design-vue'
 
 import sHeader from './components/header.vue'
 import sAnaly from './components/analy.vue'
-// import sTable2 from './components/table2.vue'
 import sTable from './components/table.vue'
 
-import { getSentenceLatestRelease, getSentenceLatestReleaseById } from '@/api/system/home'
+import { getSentenceLatestReleaseById } from '@/api/system/home'
 
 export default defineComponent({
   components: { sHeader, sAnaly, sTable },

@@ -1,6 +1,7 @@
 <template>
   <a-form
     :loading="loading"
+    v-if="canShow"
     ref="formRef"
     :model="formState"
     :label-col="labelCol"
@@ -79,7 +80,7 @@
           label="语句"
           :name="['sentenceLibrary', index, 'sentence', i, 'sentenceContent']"
           :rules="{
-            required: i == 0 ? true : false,
+            required: true,
             message: '请输入语句',
             trigger: 'blur'
           }"
@@ -101,7 +102,7 @@
   </a-form>
 </template>
 <script lang="ts">
-import { defineComponent, reactive, toRefs, ref, onMounted, watch, onUpdated } from 'vue'
+import { defineComponent, reactive, onUnmounted, ref, onMounted, watch, unref } from 'vue'
 import { Cascader, Spin, message } from 'ant-design-vue'
 import { MinusCircleOutlined } from '@ant-design/icons-vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -154,11 +155,18 @@ export default defineComponent({
     MinusCircleOutlined
   },
   setup() {
-    const formRef = ref()
+    const formRef = ref<any>(null)
     const loading = ref(false)
     const route = useRoute()
     const editId = ref()
     const categoryOptions: any = reactive([])
+    const canShow = ref(true)
+
+    onUnmounted(() => {
+      const el = unref(formRef)
+      canShow.value = false
+      el && document.body.removeChild(el)
+    })
 
     const formState = reactive(initFormData)
 
@@ -184,7 +192,6 @@ export default defineComponent({
         .validate()
         .then(async () => {
           let res
-          console.log(formState)
           if (editId.value) {
             res = await putSentencePublish({ sentencePublishId: editId.value, ...formState })
           } else {
@@ -194,7 +201,7 @@ export default defineComponent({
           if (res.code == 200) {
             message.success(res.msg, 10)
             // router.push('/sentence-library')
-            window.location.reload()
+            // window.location.reload()
           } else {
             message.error(res.msg, 10)
           }
@@ -214,11 +221,12 @@ export default defineComponent({
         sentenceLibraryName: '',
         originalLink: '',
         originalTitle: '',
-        sentence: [{ sentenceContent: '' }, { sentenceContent: '' }]
+        sentence: [{ sentenceContent: '' }]
       })
     }
     const resetForm = () => {
-      Object.assign(formState, initFormDataString)
+      const newData = JSON.parse(JSON.stringify(initFormDataString))
+      Object.assign(formState, newData)
     }
     const addSentenContent = (index, i) => {
       formState.sentenceLibrary[index].sentence.push({ sentenceContent: '' })
@@ -233,6 +241,7 @@ export default defineComponent({
       () => route.query.id,
       (newVal) => {
         if (!route.query.id) {
+          const newData = JSON.parse(JSON.stringify(initFormDataString))
           Object.assign(formState, initFormDataString)
         }
       }
@@ -261,12 +270,10 @@ export default defineComponent({
       } else {
         formRef.value.resetFields()
       }
-
       // 类别加载选项
       loading.value = true
       const { code, msg, data } = (await getSystemDict()) || {}
       loading.value = false
-
       if (code == 200) {
         let child
         // 获取子类
@@ -283,7 +290,6 @@ export default defineComponent({
             message.error(msg2)
           }
         }
-
         const list = data?.map((item) => {
           if (item.dictLabel == formState.category[0]) {
             return {
@@ -300,7 +306,6 @@ export default defineComponent({
             }
           }
         })
-
         Object.assign(categoryOptions, list)
       } else {
         message.error(msg)
@@ -310,6 +315,7 @@ export default defineComponent({
     return {
       labelCol: { style: { width: '150px' } },
       wrapperCol: { span: 14 },
+      canShow,
       formState,
       onSubmit,
       categoryOptions,
