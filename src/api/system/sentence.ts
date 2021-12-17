@@ -65,7 +65,6 @@ export function delSentencePublish(id: string) {
  * @param params
  */
 export function getSentencePublish(id) {
-  console.log('id===🚀===>', id, token)
   return http.request({
     url: [Api.sentencePublish, id].join('/'),
     method: RequestEnum.GET,

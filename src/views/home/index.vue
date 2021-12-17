@@ -45,7 +45,7 @@ export default defineComponent({
     onMounted(() => {
       getSentenceData()
       // 轮询 每五分钟调用接口 关闭页面时卸载轮询
-      timer = setInterval(() => getSentenceData(), 50000)
+      timer = setInterval(() => getSentenceData(), 300000)
     })
     //关闭页面时卸载轮询
     onBeforeUnmount(() => {

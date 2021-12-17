@@ -67,7 +67,7 @@ export default defineComponent({
         } else {
           message.error(msg)
         }
-      }, 50000)
+      }, 300000)
     })
 
     //关闭页面时卸载轮询

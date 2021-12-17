@@ -62,7 +62,9 @@ export default defineComponent({
       console.log('刷新')
       isRouterAlive.value = false
       nextTick(() => {
-        isRouterAlive.value = true
+        setTimeout(() => {
+          isRouterAlive.value = true
+        }, 0)
       })
     }
     provide('reload', reload) // provide的第一个为名称，第二个值为所需要传的参数

@@ -130,7 +130,7 @@ const initFormData = {
       sentenceLibraryName: '',
       originalLink: '',
       originalTitle: '',
-      sentence: [{ sentenceContent: '' }]
+      sentence: [{ sentenceContent: '', updateBy: '', updateTime: '' }]
     }
   ]
 }
@@ -143,7 +143,7 @@ const initFormDataString = {
       sentenceLibraryName: '',
       originalLink: '',
       originalTitle: '',
-      sentence: [{ sentenceContent: '' }]
+      sentence: [{ sentenceContent: '', updateBy: '', updateTime: '' }]
     }
   ]
 }
@@ -161,10 +161,11 @@ export default defineComponent({
     const editId = ref()
     const categoryOptions: any = reactive([])
     const canShow = ref(true)
-    const reload: any = inject('reload')
+    const router = useRouter()
+    const updateByVal = ref('')
 
     onUnmounted(() => {
-      console.log('onUnmounted===🚀===>卸载组件了')
+      formRef.value = null
     })
 
     const formState = reactive(initFormData)
@@ -192,14 +193,20 @@ export default defineComponent({
         .then(async () => {
           let res
           if (editId.value) {
+            console.log('编辑===🚀===>', editId.value)
             res = await putSentencePublish({ sentencePublishId: editId.value, ...formState })
           } else {
+            console.log('新增===🚀===>')
             res = await sentencePublish(formState)
           }
 
           if (res.code == 200) {
             message.success(res.msg, 10)
-            reload()
+            if (editId.value) {
+              router.push('/add-sentence')
+            } else {
+              resetForm()
+            }
           } else {
             message.error(res.msg, 10)
           }
@@ -214,20 +221,51 @@ export default defineComponent({
         formState.sentenceLibrary.splice(index, 1)
       }
     }
+    const formatData = (data, fmt) => {
+      var o = {
+        'M+': data.getMonth() + 1, // 月份
+        'd+': data.getDate(), // 日
+        'h+': data.getHours(), // 小时
+        'm+': data.getMinutes(), // 分
+        's+': data.getSeconds(), // 秒
+        'q+': Math.floor((data.getMonth() + 3) / 3), // 季度
+        S: data.getMilliseconds() // 毫秒
+      }
+      if (/(y+)/.test(fmt))
+        fmt = fmt.replace(RegExp.$1, (data.getFullYear() + '').substr(4 - RegExp.$1.length))
+      for (var k in o)
+        if (new RegExp('(' + k + ')').test(fmt))
+          fmt = fmt.replace(
+            RegExp.$1,
+            RegExp.$1.length == 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length)
+          )
+      return fmt
+    }
     const addSentenceLibrary = () => {
       formState.sentenceLibrary.push({
         sentenceLibraryName: '',
         originalLink: '',
         originalTitle: '',
-        sentence: [{ sentenceContent: '' }]
+        sentence: [
+          {
+            sentenceContent: '',
+            updateBy: updateByVal.value,
+            updateTime: formatData(new Date(), 'yyyy-MM-dd HH:mm:ss')
+          }
+        ]
       })
     }
+
     const resetForm = () => {
       const newData = JSON.parse(JSON.stringify(initFormDataString))
       Object.assign(formState, newData)
     }
     const addSentenContent = (index, i) => {
-      formState.sentenceLibrary[index].sentence.push({ sentenceContent: '' })
+      formState.sentenceLibrary[index].sentence.push({
+        updateTime: formatData(new Date(), 'yyyy-MM-dd hh:mm:ss'),
+        sentenceContent: '',
+        updateBy: updateByVal.value
+      })
     }
     const removeSentenceContent = (index, i) => {
       if (i !== 0) {
@@ -251,11 +289,9 @@ export default defineComponent({
       let categoryVal
       let routerId = route.query.id
       if (routerId) {
-        console.log('route.query.id===🚀===>', routerId)
         editId.value = routerId
         loading.value = true
         const { code, msg, data = {} } = (await getSentencePublish(routerId)) || {}
-        console.log('code===🚀===>', code)
         loading.value = false
 
         if (code == 200) {
@@ -264,6 +300,9 @@ export default defineComponent({
           formState.keyWord = keyWord
           formState.category = category
           formState.sentenceLibrary = sentenceLibrary
+          console.log('sentenceLibrary===🚀===>', sentenceLibrary)
+          updateByVal.value = sentenceLibrary[0].updateBy
+          // updateTime: "2021-12-15 15:12:59"
           categoryVal = category
         } else {
           message.error(msg)
