@@ -172,3 +172,41 @@ export const toHump = (name) => {
     })
     .replace('views', '')
 }
+
+/**
+ * / _ - 格式化时间
+ * @param {*} data new date()  fmt 格式
+ */
+export const formatData = (date = new Date(), fmt: any = 'yyyy-MM-dd HH:mm:ss') => {
+  const seperator1 = '-'
+  const seperator2 = ':'
+  let month: any = date.getMonth() + 1
+  let strDate: any = date.getDate()
+
+  const hh = date.getHours() < 10 ? '0' + date.getHours() : date.getHours()
+  const mm = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()
+  const ss = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()
+
+  if (month >= 1 && month <= 9) {
+    month = '0' + month
+  }
+  if (strDate >= 0 && strDate <= 9) {
+    strDate = '0' + strDate
+  }
+  if (strDate >= 0 && strDate <= 9) {
+    strDate = '0' + strDate
+  }
+  const currentdate =
+    date.getFullYear() +
+    seperator1 +
+    month +
+    seperator1 +
+    strDate +
+    ' ' +
+    hh +
+    seperator2 +
+    mm +
+    seperator2 +
+    ss
+  return currentdate
+}

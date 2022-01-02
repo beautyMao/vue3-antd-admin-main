@@ -50,7 +50,7 @@ export function getToken() {
  * -信息发布删除
  * @param params
  */
-export function delSentencePublish(id: string) {
+export function delSentencePublish(id: string | Array<string>) {
   return http.request({
     url: [Api.sentencePublish, id].join('/'),
     method: RequestEnum.DELETE,

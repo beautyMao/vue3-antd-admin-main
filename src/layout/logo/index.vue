@@ -1,6 +1,6 @@
 <template>
   <div class="logo">
-    <h2 v-show="!collapsed" class="title">内部管理平台v1.1.5</h2>
+    <h2 v-show="!collapsed" class="title">内部管理平台v1.1.8</h2>
   </div>
 </template>
 

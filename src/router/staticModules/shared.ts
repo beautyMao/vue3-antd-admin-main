@@ -11,6 +11,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import(/* webpackChunkName: "login" */ '@/views/shared/login/index.vue')
   },
   {
+    path: '/register',
+    name: 'register',
+    component: () => import(/* webpackChunkName: "login" */ '@/views/shared/register/index.vue')
+  },
+  {
     path: '/icons',
     name: 'icons',
     component: () => import(/* webpackChunkName: "icons" */ '@/views/shared/icons/index.vue')

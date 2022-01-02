@@ -2,7 +2,7 @@
   <div class="header">
     <div class="login-box">
       <a-button style="margin-right: 20px" @click="goLogin"> 登录 </a-button>
-      <a-button> 注册 </a-button>
+      <a-button @click="goReg"> 注册 </a-button>
     </div>
     <!-- <div class="kong">预留广告位</div> -->
     <img src="~@/assets/analysis.svg" class="logo" />
@@ -17,7 +17,10 @@ export default defineComponent({
     const goLogin = () => {
       router.push('/login')
     }
-    return { goLogin }
+    const goReg = () => {
+      router.push('/register')
+    }
+    return { goLogin, goReg }
   }
 })
 </script>

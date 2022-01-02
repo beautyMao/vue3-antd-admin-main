@@ -109,3 +109,24 @@ export function loginNew(params) {
     params
   })
 }
+
+/**
+ * @description: 注册获取手机验证码URL
+ */
+export function getRegister(phonenumber) {
+  return http.request({
+    url: `/checkSms/register/${phonenumber}`,
+    method: 'GET'
+  })
+}
+
+/**
+ * @description: 注册接口文档
+ */
+export function postUserRegister(params) {
+  return http.request({
+    url: '/system/user/regist',
+    method: 'POST',
+    params
+  })
+}

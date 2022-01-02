@@ -1,6 +1,7 @@
 <template>
   <div class="login-box">
     <a-form layout="horizontal" :model="formInline" @submit.prevent="handleSubmit">
+      <a href="./" style="margin-bottom: 10px; display: block">回首页</a>
       <a-form-item>
         <a-input v-model:value="formInline.username" size="large" placeholder="请输入用户名">
           <template #prefix><user-outlined type="user" /></template>

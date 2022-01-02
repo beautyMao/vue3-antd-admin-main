@@ -1,8 +1,8 @@
 <template>
   <a-form
-    :loading="loading"
     v-if="canShow"
     ref="formRef"
+    :loading="loading"
     :model="formState"
     :label-col="labelCol"
     :wrapper-col="wrapperCol"
@@ -62,7 +62,7 @@
             <a-button type="button" style="margin-right: 8px" @click="addSentenceLibrary(index)"
               >添加</a-button
             >
-            <a-button type="button" @click="removeSentenceLibrary(index)">删除</a-button>
+            <a-button type="button" @≈="removeSentenceLibrary(index)">删除</a-button>
           </div>
         </a-form-item>
 
@@ -86,6 +86,7 @@
           }"
         >
           <a-textarea v-model:value="s.sentenceContent" style="width: 100%; margin-right: 8px" />
+          <div v-if="s.wordCount">{{ s.wordCount }}字数</div>
           <div class="btn-box">
             <a-button type="button" style="margin-right: 8px" @click="addSentenContent(index, i)"
               >添加</a-button
@@ -106,7 +107,7 @@ import { defineComponent, reactive, onUnmounted, ref, onMounted, watch, unref, i
 import { Cascader, Spin, message } from 'ant-design-vue'
 import { MinusCircleOutlined } from '@ant-design/icons-vue'
 import { useRoute, useRouter } from 'vue-router'
-import { stOptions } from '@/mock/index'
+import { formatData } from '@/utils/common'
 
 import {
   sentencePublish,
@@ -121,31 +122,35 @@ interface sentence_library {
   key: number
 }
 
-const initFormData = {
-  theme: '',
-  keyWord: '',
-  category: '',
-  sentenceLibrary: [
-    {
-      sentenceLibraryName: '',
-      originalLink: '',
-      originalTitle: '',
-      sentence: [{ sentenceContent: '', updateBy: '', updateTime: '' }]
-    }
-  ]
+const initFormData = () => {
+  return {
+    theme: '',
+    keyWord: '',
+    category: '',
+    sentenceLibrary: [
+      {
+        sentenceLibraryName: '',
+        originalLink: '',
+        originalTitle: '',
+        sentence: [{ sentenceContent: '' }]
+      }
+    ]
+  }
 }
-const initFormDataString = {
-  theme: '',
-  keyWord: '',
-  category: '',
-  sentenceLibrary: [
-    {
-      sentenceLibraryName: '',
-      originalLink: '',
-      originalTitle: '',
-      sentence: [{ sentenceContent: '', updateBy: '', updateTime: '' }]
-    }
-  ]
+const initFormDataString = () => {
+  return {
+    theme: '',
+    keyWord: '',
+    category: '',
+    sentenceLibrary: [
+      {
+        sentenceLibraryName: '',
+        originalLink: '',
+        originalTitle: '',
+        sentence: [{ sentenceContent: '' }]
+      }
+    ]
+  }
 }
 
 export default defineComponent({
@@ -162,13 +167,13 @@ export default defineComponent({
     const categoryOptions: any = reactive([])
     const canShow = ref(true)
     const router = useRouter()
-    const updateByVal = ref('')
+    const reload: any = inject('reload')
 
     onUnmounted(() => {
       formRef.value = null
     })
 
-    const formState = reactive(initFormData)
+    const formState = reactive(initFormData())
 
     const loadCategoryData = (selectedOptions) => {
       const targetOption = selectedOptions[selectedOptions.length - 1]
@@ -193,10 +198,8 @@ export default defineComponent({
         .then(async () => {
           let res
           if (editId.value) {
-            console.log('编辑===🚀===>', editId.value)
             res = await putSentencePublish({ sentencePublishId: editId.value, ...formState })
           } else {
-            console.log('新增===🚀===>')
             res = await sentencePublish(formState)
           }
 
@@ -221,26 +224,7 @@ export default defineComponent({
         formState.sentenceLibrary.splice(index, 1)
       }
     }
-    const formatData = (data, fmt) => {
-      var o = {
-        'M+': data.getMonth() + 1, // 月份
-        'd+': data.getDate(), // 日
-        'h+': data.getHours(), // 小时
-        'm+': data.getMinutes(), // 分
-        's+': data.getSeconds(), // 秒
-        'q+': Math.floor((data.getMonth() + 3) / 3), // 季度
-        S: data.getMilliseconds() // 毫秒
-      }
-      if (/(y+)/.test(fmt))
-        fmt = fmt.replace(RegExp.$1, (data.getFullYear() + '').substr(4 - RegExp.$1.length))
-      for (var k in o)
-        if (new RegExp('(' + k + ')').test(fmt))
-          fmt = fmt.replace(
-            RegExp.$1,
-            RegExp.$1.length == 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length)
-          )
-      return fmt
-    }
+
     const addSentenceLibrary = () => {
       formState.sentenceLibrary.push({
         sentenceLibraryName: '',
@@ -248,23 +232,20 @@ export default defineComponent({
         originalTitle: '',
         sentence: [
           {
-            sentenceContent: '',
-            updateBy: updateByVal.value,
-            updateTime: formatData(new Date(), 'yyyy-MM-dd HH:mm:ss')
+            sentenceContent: ''
           }
         ]
       })
     }
 
     const resetForm = () => {
-      const newData = JSON.parse(JSON.stringify(initFormDataString))
+      const newData = JSON.parse(JSON.stringify(initFormDataString()))
       Object.assign(formState, newData)
+      reload()
     }
     const addSentenContent = (index, i) => {
       formState.sentenceLibrary[index].sentence.push({
-        updateTime: formatData(new Date(), 'yyyy-MM-dd hh:mm:ss'),
-        sentenceContent: '',
-        updateBy: updateByVal.value
+        sentenceContent: ''
       })
     }
     const removeSentenceContent = (index, i) => {
@@ -277,8 +258,8 @@ export default defineComponent({
       () => route.query.id,
       (newVal) => {
         if (!route.query.id) {
-          const newData = JSON.parse(JSON.stringify(initFormDataString))
-          Object.assign(formState, initFormDataString)
+          const newData = JSON.parse(JSON.stringify(initFormDataString()))
+          Object.assign(formState, newData)
         }
       }
     )
@@ -300,10 +281,6 @@ export default defineComponent({
           formState.keyWord = keyWord
           formState.category = category
           formState.sentenceLibrary = sentenceLibrary
-          console.log('sentenceLibrary===🚀===>', sentenceLibrary)
-          updateByVal.value = sentenceLibrary[0].updateBy
-          // updateTime: "2021-12-15 15:12:59"
-          categoryVal = category
         } else {
           message.error(msg)
         }
